@@ -8,6 +8,7 @@ public class CochilocoApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CochilocoApplication.class, args);
+		System.out.println("Hola spring");
 	}
 
 }
