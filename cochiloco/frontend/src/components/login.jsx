@@ -1,7 +1,10 @@
+cat > src/components/login.jsx << 'EOF'
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { User, Lock, Mail, Utensils, ChefHat } from 'lucide-react';
 
-export default function QuickBiteLogin() {
+export default function CochiLocoLogin() {
+  const navigate = useNavigate();
   const [userType, setUserType] = useState('cliente');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,7 +14,20 @@ export default function QuickBiteLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Login attempt:', { userType, email, password });
-    // Aquí iría la lógica de autenticación
+    
+    // Lógica de autenticación para admin
+    if (userType === 'administrador' && email === 'admin@store.com' && password === 'admin123') {
+      console.log('Admin login exitoso, redirigiendo a dashboard');
+      navigate('/dashboard');
+    } 
+    // Lógica para cliente
+    else if (userType === 'cliente' && email === 'cliente@email.com' && password === 'cliente123') {
+      alert('Bienvenido Cliente! - Dashboard en construcción');
+      // navigate('/cliente'); // Puedes agregar ruta para cliente después
+    } 
+    else {
+      alert('Credenciales incorrectas. Use:\nAdmin: admin@store.com / admin123\nCliente: cliente@email.com / cliente123');
+    }
   };
 
   return (
@@ -31,7 +47,7 @@ export default function QuickBiteLogin() {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-full mb-4 shadow-lg">
               <Utensils className="w-10 h-10 text-orange-500" />
             </div>
-            <h1 className="text-4xl font-bold mb-2">QuickBite</h1>
+            <h1 className="text-4xl font-bold mb-2">CochiLoco</h1>
             <p className="text-orange-100 text-sm">
               {isLogin 
                 ? 'Ingresa tus credenciales para ordenar deliciosa comida'
@@ -157,8 +173,8 @@ export default function QuickBiteLogin() {
             <div className="mt-8 p-4 bg-gray-50 rounded-xl border border-gray-200">
               <p className="text-xs font-semibold text-gray-600 mb-2">Credenciales de prueba:</p>
               <div className="space-y-1 text-xs text-gray-500">
-                <p><span className="font-medium">Cliente:</span> cliente@email.com / cliente123</p>
                 <p><span className="font-medium">Admin:</span> admin@store.com / admin123</p>
+                <p><span className="font-medium">Cliente:</span> cliente@email.com / cliente123</p>
               </div>
             </div>
           </div>
@@ -166,7 +182,7 @@ export default function QuickBiteLogin() {
 
         {/* Footer */}
         <p className="text-center text-sm text-gray-600 mt-6">
-          Protegido por QuickBite © 2026
+          Protegido por CochiLoco © 2026
         </p>
       </div>
 
