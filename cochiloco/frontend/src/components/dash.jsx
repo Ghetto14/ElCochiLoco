@@ -1,11 +1,22 @@
-cat > src/components/dash.jsx << 'EOF'
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, LogOut, Package, ShoppingCart, User, TrendingUp } from 'lucide-react';
+import { Menu, Check } from 'lucide-react';
 
 export default function CochiLocoDashboard() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [orders, setOrders] = useState([
+    {
+      id: 1,
+      customer: 'Cliente Demo',
+      amount: '$23.97',
+      date: '2026-04-15',
+      items: [
+        { name: 'Frappe de Chocolate', es_frio: true },
+        { name: 'Hamburguesa Clásica', es_frio: false }
+      ]
+    }
+  ]);
 
   const stats = [
     {
@@ -17,14 +28,14 @@ export default function CochiLocoDashboard() {
     },
     {
       label: 'Total Pedidos',
-      value: '1',
+      value: orders.length.toString(),
       icon: '✓',
       bgColor: 'bg-green-50',
       borderColor: 'border-green-200'
     },
     {
       label: 'Pedidos Pendientes',
-      value: '1',
+      value: orders.filter(o => !o.completed).length.toString(),
       icon: '👤',
       bgColor: 'bg-yellow-50',
       borderColor: 'border-yellow-200'
@@ -38,17 +49,13 @@ export default function CochiLocoDashboard() {
     }
   ];
 
-  const orders = [
-    {
-      id: 1,
-      customer: 'Cliente Demo',
-      amount: '$23.97',
-      date: '2026-04-15'
+  const handleMarkComplete = (id) => {
+    if (window.confirm('¿Marcar este pedido como completado?')) {
+      setOrders(orders.filter(o => o.id !== id));
     }
-  ];
+  };
 
   const handleLogout = () => {
-    // Aquí puedes agregar lógica de cierre de sesión
     navigate('/login');
   };
 
@@ -84,20 +91,23 @@ export default function CochiLocoDashboard() {
 
         {/* Navigation */}
         <nav className="flex-1 px-3 py-6 space-y-2">
-          <div className="px-3 py-3 bg-orange-500 rounded-lg text-white flex items-center gap-3 cursor-pointer hover:bg-orange-600 transition">
+          <div 
+            onClick={() => navigate('/dashboard')}
+            className="px-3 py-3 bg-orange-500 rounded-lg text-white flex items-center gap-3 cursor-pointer hover:bg-orange-600 transition"
+          >
             <span className="text-xl">📊</span>
             {sidebarOpen && <span>Dashboard</span>}
           </div>
           
-          <div className="px-3 py-3 text-gray-300 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-slate-800 transition">
+          <div 
+            onClick={() => navigate('/menu')}
+            className="px-3 py-3 text-gray-300 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-slate-800 transition"
+          >
             <span className="text-xl">🍔</span>
             {sidebarOpen && <span>Menú</span>}
           </div>
           
-          <div className="px-3 py-3 text-gray-300 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-slate-800 transition">
-            <span className="text-xl">📦</span>
-            {sidebarOpen && <span>Pedidos</span>
-          }</div>
+        
         </nav>
 
         {/* Logout */}
@@ -153,32 +163,58 @@ export default function CochiLocoDashboard() {
           {/* Recent Orders */}
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-900">Órdenes Recientes</h2>
+              <h2 className="text-xl font-bold text-gray-900">Órdenes Pendientes de Preparación</h2>
             </div>
 
             <div className="divide-y divide-gray-200">
-              {orders.map((order) => (
-                <div
-                  key={order.id}
-                  className="px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition cursor-pointer"
-                >
-                  <div>
-                    <p className="font-semibold text-gray-900">Pedido #{order.id}</p>
-                    <p className="text-sm text-gray-500">{order.customer}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-gray-900">{order.amount}</p>
-                    <p className="text-sm text-gray-500">{order.date}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+              {orders.length > 0 ? (
+                orders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="px-6 py-4 hover:bg-gray-50 transition"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <p className="font-semibold text-gray-900">Pedido #{order.id}</p>
+                        <p className="text-sm text-gray-500">{order.customer}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold text-gray-900">{order.amount}</p>
+                        <p className="text-sm text-gray-500">{order.date}</p>
+                      </div>
+                    </div>
 
-            {orders.length === 0 && (
-              <div className="px-6 py-8 text-center text-gray-500">
-                No hay órdenes recientes
-              </div>
-            )}
+                    {/* Items con indicador de hielo */}
+                    <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                      <p className="text-xs font-semibold text-gray-600 mb-2">PRODUCTOS:</p>
+                      {order.items.map((item, idx) => (
+                        <div key={idx} className="flex items-center justify-between text-sm mb-1">
+                          <span className="text-gray-700">{item.name}</span>
+                          {item.es_frio && (
+                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-semibold">
+                              ❄️ Con Hielo
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Botón de Completado */}
+                    <button
+                      onClick={() => handleMarkComplete(order.id)}
+                      className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition"
+                    >
+                      <Check size={20} />
+                      Marcar como Completado ✓
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="px-6 py-8 text-center text-gray-500">
+                  No hay órdenes pendientes
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

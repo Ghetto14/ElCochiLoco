@@ -1,4 +1,3 @@
-cat > src/components/login.jsx << 'EOF'
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, Lock, Mail, Utensils, ChefHat } from 'lucide-react';

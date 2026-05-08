@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Edit, Trash2, Plus } from 'lucide-react';
+import { Edit, Trash2, Plus, Menu, Check } from 'lucide-react';
+import AddProductModal from './AddProductModal';
 
 export default function MenuManagement() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -12,7 +14,8 @@ export default function MenuManagement() {
       description: 'Jugosa hamburguesa de carne de res con lechuga, tomate, cebolla y queso',
       category: 'Hamburguesas',
       price: '$8.99',
-      image: '🍔'
+      image: '🍔',
+      es_frio: false
     },
     {
       id: 2,
@@ -20,7 +23,8 @@ export default function MenuManagement() {
       description: 'Delicioso frappe de chocolate con crema batida y jarabe',
       category: 'Frappes',
       price: '$5.99',
-      image: '🥤'
+      image: '🥤',
+      es_frio: true
     },
     {
       id: 3,
@@ -28,7 +32,8 @@ export default function MenuManagement() {
       description: 'Pizza familiar con abundante pepperoni y queso mozzarella',
       category: 'Pizzas',
       price: '$12.99',
-      image: '🍕'
+      image: '🍕',
+      es_frio: false
     },
     {
       id: 4,
@@ -36,7 +41,8 @@ export default function MenuManagement() {
       description: 'Frappe cremoso de vainilla francesa con crema batida',
       category: 'Frappes',
       price: '$5.49',
-      image: '🥤'
+      image: '🥤',
+      es_frio: true
     },
     {
       id: 5,
@@ -44,7 +50,8 @@ export default function MenuManagement() {
       description: 'Hot dog con salchicha premium, queso, tocino y salsas especiales',
       category: 'Hot Dogs',
       price: '$6.99',
-      image: '🌭'
+      image: '🌭',
+      es_frio: false
     },
     {
       id: 6,
@@ -52,7 +59,8 @@ export default function MenuManagement() {
       description: 'Refrescante limonada frozen con hielo y menta',
       category: 'Bebidas Frías',
       price: '$4.99',
-      image: '🥤'
+      image: '🥤',
+      es_frio: true
     },
     {
       id: 7,
@@ -60,12 +68,18 @@ export default function MenuManagement() {
       description: 'Orden de 10 alitas bañadas en salsa BBQ con aderezo ranch',
       category: 'Alitas',
       price: '$10.99',
-      image: '🍗'
+      image: '🍗',
+      es_frio: false
     }
   ]);
 
+  const handleAddProduct = (newProduct) => {
+    setProducts([...products, newProduct]);
+    setShowAddModal(false);
+  };
+
   const handleDelete = (id) => {
-    if (window.confirm('¿Eliminar este producto?')) {
+    if (window.confirm('¿Estás seguro de que quieres eliminar este producto?')) {
       setProducts(products.filter(p => p.id !== id));
     }
   };
@@ -79,322 +93,180 @@ export default function MenuManagement() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#F3F4F6', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div style={{
-        width: sidebarOpen ? '227px' : '80px',
-        backgroundColor: '#0F172A',
-        color: 'white',
-        transition: 'all 0.3s ease',
-        display: 'flex',
-        flexDirection: 'column',
-        borderRight: '1px solid #1E293B'
-      }}>
+      <div className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-slate-900 text-white transition-all duration-300 flex flex-col`}>
         {/* Logo */}
-        <div style={{
-          padding: '24px',
-          borderBottom: '1px solid #334155'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              backgroundColor: '#FF6B35',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '24px',
-              fontWeight: 'bold'
-            }}>
+        <div className="p-6 border-b border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center font-bold text-lg">
               🐷
             </div>
             {sidebarOpen && (
               <div>
-                <div style={{ fontWeight: 'bold', fontSize: '16px', color: 'white' }}>Cochiloco</div>
-                <div style={{ fontSize: '11px', color: '#9CA3AF' }}>Panel de Administración</div>
+                <div className="font-bold text-white">Cochiloco</div>
+                <div className="text-xs text-gray-400">Panel de Administración</div>
               </div>
             )}
           </div>
         </div>
 
         {/* User Profile */}
-        <div style={{
-          padding: '16px 24px',
-          borderBottom: '1px solid #334155'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              backgroundColor: '#FF6B35',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '20px'
-            }}>
+        <div className="px-6 py-4 border-b border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-500 rounded-full flex items-center justify-center text-lg">
               👤
             </div>
             {sidebarOpen && (
               <div>
-                <div style={{ fontWeight: '600', fontSize: '14px', color: 'white' }}>Admin User</div>
-                <div style={{ fontSize: '12px', color: '#9CA3AF' }}>Administrador</div>
+                <div className="font-semibold text-white">Admin User</div>
+                <div className="text-xs text-gray-400">Administrador</div>
               </div>
             )}
           </div>
         </div>
 
         {/* Navigation */}
-        <nav style={{
-          flex: 1,
-          padding: '24px 12px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px'
-        }}>
+        <nav className="flex-1 px-3 py-6 space-y-2">
           <div 
             onClick={() => navigate('/dashboard')}
-            style={{
-              padding: '12px',
-              color: '#D1D5DB',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1E293B'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+            className="px-3 py-3 text-gray-300 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-slate-800 transition"
           >
-            <span style={{ fontSize: '18px' }}>📊</span>
+            <span className="text-xl">📊</span>
             {sidebarOpen && <span>Dashboard</span>}
           </div>
           
           <div 
             onClick={() => navigate('/menu')}
-            style={{
-              padding: '12px',
-              backgroundColor: '#FF6B35',
-              borderRadius: '8px',
-              color: 'white',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
+            className="px-3 py-3 bg-orange-500 rounded-lg text-white flex items-center gap-3 cursor-pointer hover:bg-orange-600 transition"
           >
-            <span style={{ fontSize: '18px' }}>≡</span>
+            <span className="text-xl">≡</span>
             {sidebarOpen && <span>Menú</span>}
           </div>
           
-          <div 
-            onClick={() => navigate('/pedidos')}
-            style={{
-              padding: '12px',
-              color: '#D1D5DB',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1E293B'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-          >
-            <span style={{ fontSize: '18px' }}>✓</span>
+          <div className="px-3 py-3 text-gray-300 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-slate-800 transition">
+            <span className="text-xl">✓</span>
             {sidebarOpen && <span>Pedidos</span>}
           </div>
         </nav>
 
         {/* Logout */}
-        <div style={{
-          padding: '12px',
-          borderTop: '1px solid #334155'
-        }}>
+        <div className="px-3 py-4 border-t border-slate-700">
           <div 
             onClick={handleLogout}
-            style={{
-              padding: '12px',
-              color: '#D1D5DB',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1E293B'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'transparent'; }}
+            className="px-3 py-3 text-gray-300 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-slate-800 transition"
           >
-            <span style={{ fontSize: '18px' }}>🚪</span>
+            <span className="text-xl">🚪</span>
             {sidebarOpen && <span>Cerrar Sesión</span>}
           </div>
         </div>
 
         {/* Toggle Button */}
-        <div style={{ padding: '16px 12px' }}>
+        <div className="px-3 py-4">
           <button
             onClick={toggleSidebar}
-            style={{
-              width: '100%',
-              padding: '8px',
-              color: '#9CA3AF',
-              backgroundColor: 'transparent',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '18px'
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#1E293B';
-              e.target.style.color = 'white';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.backgroundColor = 'transparent';
-              e.target.style.color = '#9CA3AF';
-            }}
+            className="w-full p-2 text-gray-400 hover:text-white hover:bg-slate-800 rounded-lg transition"
           >
-            ☰
+            <Menu size={20} />
           </button>
         </div>
       </div>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+      <div className="flex-1 flex flex-col overflow-auto">
         {/* Header */}
-        <div style={{
-          backgroundColor: 'white',
-          borderBottom: '1px solid #E5E7EB',
-          padding: '32px 32px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start'
-        }}>
+        <div className="bg-white border-b border-gray-200 px-8 py-6 flex justify-between items-start">
           <div>
-            <h1 style={{ fontSize: '32px', fontWeight: '700', color: '#111827', margin: 0 }}>Gestión de Menú</h1>
-            <p style={{ color: '#6B7280', marginTop: '8px', margin: 0 }}>Administra el catálogo de comida y bebidas</p>
+            <h1 className="text-3xl font-bold text-gray-900">Gestión de Menú</h1>
+            <p className="text-gray-600 mt-2">Administra el catálogo de comida y bebidas</p>
           </div>
-          <button style={{
-            backgroundColor: '#FF6B35',
-            color: 'white',
-            border: 'none',
-            padding: '12px 24px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 transition shadow-md"
+          >
             <Plus size={18} />
             Nuevo Producto
           </button>
         </div>
 
         {/* Table */}
-        <div style={{ flex: 1, padding: '32px', overflow: 'auto' }}>
-          <div style={{
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            border: '1px solid #E5E7EB',
-            overflow: 'hidden'
-          }}>
+        <div className="flex-1 p-8 overflow-auto">
+          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
             {/* Table Header */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '80px 1fr 150px 100px 120px',
-              padding: '16px 24px',
-              backgroundColor: '#F9FAFB',
-              borderBottom: '1px solid #E5E7EB',
-              fontWeight: '600',
-              fontSize: '14px',
-              color: '#374151',
-              gap: '16px'
-            }}>
+            <div className="grid grid-cols-6 gap-4 p-6 bg-gray-50 border-b border-gray-200 font-semibold text-gray-700 text-sm">
               <div>Imagen</div>
               <div>Nombre</div>
               <div>Categoría</div>
               <div>Precio</div>
+              <div>Hielo</div>
               <div>Acciones</div>
             </div>
 
             {/* Table Rows */}
-            {products.map((product, index) => (
-              <div
-                key={product.id}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '80px 1fr 150px 100px 120px',
-                  padding: '16px 24px',
-                  borderBottom: index !== products.length - 1 ? '1px solid #E5E7EB' : 'none',
-                  alignItems: 'center',
-                  gap: '16px',
-                  transition: 'background-color 0.2s'
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#F9FAFB'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'white'; }}
-              >
-                <div style={{
-                  width: '60px',
-                  height: '60px',
-                  backgroundColor: '#E5E7EB',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '32px'
-                }}>
-                  {product.image}
-                </div>
+            {products.length > 0 ? (
+              products.map((product, index) => (
+                <div
+                  key={product.id}
+                  className={`grid grid-cols-6 gap-4 p-6 items-center hover:bg-gray-50 transition ${
+                    index !== products.length - 1 ? 'border-b border-gray-200' : ''
+                  }`}
+                >
+                  <div className="w-16 h-16 bg-gray-200 rounded-lg flex items-center justify-center text-2xl">
+                    {product.image}
+                  </div>
 
-                <div>
-                  <p style={{ fontSize: '14px', fontWeight: '600', color: '#111827', margin: 0 }}>{product.name}</p>
-                  <p style={{ fontSize: '12px', color: '#6B7280', margin: '4px 0 0 0' }}>{product.description}</p>
-                </div>
+                  <div>
+                    <p className="font-semibold text-gray-900">{product.name}</p>
+                    <p className="text-sm text-gray-500 mt-1">{product.description}</p>
+                  </div>
 
-                <div style={{ fontSize: '14px', color: '#374151' }}>{product.category}</div>
-                <div style={{ fontSize: '14px', fontWeight: '600', color: '#111827' }}>{product.price}</div>
+                  <div className="text-gray-700">{product.category}</div>
+                  <div className="font-semibold text-gray-900">{product.price}</div>
 
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      color: '#6B7280'
-                    }}
-                    onMouseEnter={(e) => { e.target.style.color = '#FF6B35'; }}
-                    onMouseLeave={(e) => { e.target.style.color = '#6B7280'; }}
-                  >
-                    <Edit size={18} />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(product.id)}
-                    style={{
-                      backgroundColor: 'transparent',
-                      border: 'none',
-                      cursor: 'pointer',
-                      padding: '4px',
-                      color: '#EF4444'
-                    }}
-                    onMouseEnter={(e) => { e.target.style.opacity = '0.8'; }}
-                    onMouseLeave={(e) => { e.target.style.opacity = '1'; }}
-                  >
-                    <Trash2 size={18} />
-                  </button>
+                  <div className="text-center">
+                    {product.es_frio ? (
+                      <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-semibold">
+                        ❄️ Frío
+                      </span>
+                    ) : (
+                      <span className="inline-block bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-semibold">
+                        🔥 Caliente
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2 justify-end">
+                    <button
+                      className="p-2 text-gray-500 hover:text-orange-500 hover:bg-orange-50 rounded-lg transition"
+                      title="Editar"
+                    >
+                      <Edit size={18} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                      title="Eliminar"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="p-8 text-center text-gray-500">
+                No hay productos en el menú
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
+
+      {/* Modal para agregar productos */}
+      <AddProductModal 
+        isOpen={showAddModal} 
+        onClose={() => setShowAddModal(false)}
+        onAddProduct={handleAddProduct}
+      />
     </div>
   );
 }
