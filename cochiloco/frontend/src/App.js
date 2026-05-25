@@ -1,23 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import CochiLocoLogin from './components/login';
-import CochiLocoDashboard from './components/dash';
-import MenuManagement from './components/MenuManagement';
+
+// Componentes
+import Login from './components/login';
+
+// Admin
+import Dashboard from './components/admin/dash';
+import MenuManagement from './components/admin/MenuManagement';
+
+// Cliente
+import ClienteMenu from './components/cliente/ClienteMenu_ReactRouter';
+import ClienteCarrito from './components/cliente/ClienteCarrito_ReactRouter';
+import ClientePerfil from './components/cliente/ClientePerfil_ReactRouter';
+
 export default function App() {
+  const [carrito, setCarrito] = useState([]);
+
   return (
     <Router>
       <Routes>
-        {/* Ruta de Login - Es la página inicial */}
-        <Route path="/login" element={<CochiLocoLogin />} />
-        
-        {/* Ruta del Dashboard */}
-        <Route path="/dashboard" element={<CochiLocoDashboard />} />
-        
-        {/* Ruta del Menú */}
-        <Route path="/menu" element={<MenuManagement />} />
-        
-        {/* Si accedes a "/" te redirige al login */}
+        {/* Ruta por defecto */}
         <Route path="/" element={<Navigate to="/login" replace />} />
+
+        {/* LOGIN - Unificado para ADMIN y CLIENTE */}
+        <Route path="/login" element={<Login />} />
+
+        {/* Rutas ADMIN */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/menu" element={<MenuManagement />} />
+
+        {/* Rutas CLIENTE */}
+        <Route path="/cliente" element={<ClienteMenu carrito={carrito} setCarrito={setCarrito} />} />
+        <Route path="/cliente-carrito" element={<ClienteCarrito carrito={carrito} setCarrito={setCarrito} />} />
+        <Route path="/cliente-perfil" element={<ClientePerfil />} />
+
+        {/* Ruta comodín - Si no existe, redirige a login */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
